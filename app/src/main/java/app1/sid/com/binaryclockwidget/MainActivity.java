@@ -23,7 +23,8 @@ public class MainActivity extends AppWidgetProvider {
     private int color_block,color_block2 ;
     public RemoteViews views;
     public int sec,min,hou ;
-
+    Timer timer;
+    boolean running;
 
 
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,int[] appWidgetIds) {
@@ -63,8 +64,13 @@ public class MainActivity extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
-
         super.onDisabled(context);
+
+        running = false;
+        Toast.makeText(context,"Disabled Timer!",Toast.LENGTH_SHORT).show();
+
+
+
     }
 
     @Override
@@ -75,6 +81,7 @@ public class MainActivity extends AppWidgetProvider {
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
         //After after 3 seconds
         am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ 1000 , 1000 , pi);*/
+        running = true;
 
     }
 
@@ -83,7 +90,7 @@ public class MainActivity extends AppWidgetProvider {
 
     private void startTimer( final Context context) {
 
-        Timer timer;
+
 
 
         TimerTask minuteTask = new TimerTask() {
@@ -92,25 +99,26 @@ public class MainActivity extends AppWidgetProvider {
             public void run() {
 
 
-                PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "YOUR TAG");
-                //Acquire the lock
-                wl.acquire();
+                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                    PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "YOUR TAG");
+                    //Acquire the lock
+                    wl.acquire();
 
-                //You can do the processing here update the widget/remote views.
-                views = new RemoteViews(context.getPackageName(),
-                        R.layout.activity_main);
-                timeGet();
-                methodHH(String.valueOf(hou));
-                methodMM(String.valueOf(min));
-                methodSS(String.valueOf(sec));
-                Log.e("Tick", "tick");
+                    //You can do the processing here update the widget/remote views.
+                    views = new RemoteViews(context.getPackageName(),
+                            R.layout.activity_main);
+                    timeGet();
+                    methodHH(String.valueOf(hou));
+                    methodMM(String.valueOf(min));
+                    methodSS(String.valueOf(sec));
+                    Log.e("Tick", "tick");
 
-                ComponentName thiswidget = new ComponentName(context, MainActivity.class);
-                AppWidgetManager manager = AppWidgetManager.getInstance(context);
-                manager.updateAppWidget(thiswidget, views);
-                //Release the lock
-                wl.release();
+                    ComponentName thiswidget = new ComponentName(context, MainActivity.class);
+                    AppWidgetManager manager = AppWidgetManager.getInstance(context);
+                    manager.updateAppWidget(thiswidget, views);
+                    //Release the lock
+                    wl.release();
+
 
 
             }
